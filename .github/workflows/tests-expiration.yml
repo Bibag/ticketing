@@ -1,4 +1,4 @@
-name: tests-expirations
+name: tests-expiration
 on:
   pull_request
 
