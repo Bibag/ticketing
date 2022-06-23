@@ -4,6 +4,8 @@ import request from 'supertest';
 import { app } from '../app';
 import jwt from 'jsonwebtoken';
 
+jest.setTimeout(200000);
+
 jest.mock('../nats-wrapper');
 
 declare global {

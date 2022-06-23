@@ -65,11 +65,13 @@ router.post(
     });
     await payment.save();
 
-    await new PaymentCreatedPublisher(natsWrapper.client).publish({
+    const messageData = {
       id: payment.id,
       orderId: payment.orderId,
       stripeId: payment.stripeId,
-    });
+    };
+
+    await new PaymentCreatedPublisher(natsWrapper.client).publish(messageData);
 
     res.status(201).send({ id: payment.id });
   }
