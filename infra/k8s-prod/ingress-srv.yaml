@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
-    - host: www.tiki-ticket.shop
+    - host: tiki-ticket.shop
       http:
         paths:
           - path: /api/users/?(.*)
