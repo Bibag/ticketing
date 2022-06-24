@@ -5,7 +5,6 @@ import Router from 'next/router';
 
 const OrderDetail = ({ order, currentUser }) => {
   const [timeLeft, setTimeLeft] = useState('');
-  const [payClickStatus, setPayClickStatus] = useState(false);
   const [deleteClickStatus, setDeleteClickStatus] = useState(false);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const OrderDetail = ({ order, currentUser }) => {
     url: `/api/orders/${order.id}`,
     method: 'delete',
     body: {},
-    onSuccess: (payment) => Router.push('/orders'),
+    onSuccess: () => Router.push('/orders'),
   });
 
   const onClickDeleteOrder = async (event) => {
@@ -96,7 +95,7 @@ OrderDetail.getInitialProps = async (context, client, currentUser) => {
 
   const { data } = await client.get(`/api/orders/${orderId}`);
 
-  return { order: data };
+  return { order: data || {} };
 };
 
 export default OrderDetail;
