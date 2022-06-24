@@ -5,7 +5,7 @@ const BuildClient = ({ req }) => {
     //we are on the server
 
     return axios.create({
-      baseURL: 'tiki-ticket.shop/',
+      baseURL: 'http://www.tiki-ticket.shop/',
       headers: req.headers,
     });
   } else {
