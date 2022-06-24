@@ -64,6 +64,7 @@ const OrderDetail = ({ order, currentUser }) => {
               <div>Order expired</div>
             )}
           </div>
+
           {payOrder.errors}
           {deleteOrder.errors}
 
