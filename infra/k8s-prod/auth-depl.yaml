@@ -19,8 +19,8 @@ spec:
             - name: MONGO_URI
               valueFrom:
                 secretKeyRef:
-                  name: mongo-uri-secret
-                  key: MONGO_URI_KEY
+                  name: mongo-uri-auth-secret
+                  key: MONGO_URI_AUTH_KEY
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
