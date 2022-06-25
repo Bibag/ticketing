@@ -47,10 +47,10 @@ router.post(
       throw new NotAuthorizedError();
     }
     if (order.status === OrderStatus.Cancelled) {
-      throw new BadRequestError('Cannot pay for an cancelled order');
+      throw new BadRequestError('Cannot pay for the cancelled order');
     }
     if (order.status === OrderStatus.Complete) {
-      throw new BadRequestError('Cannot pay for an already paid order');
+      throw new BadRequestError('Cannot pay for the already paid order');
     }
 
     const charge = await stripe.charges.create({
