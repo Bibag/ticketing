@@ -1,4 +1,5 @@
 import { Subjects } from './subjects';
+import { TicketStatus } from './types/ticket-status';
 export interface TicketUpdatedEvent {
     subject: Subjects.TicketUpdated;
     data: {
@@ -6,7 +7,10 @@ export interface TicketUpdatedEvent {
         version: number;
         title: string;
         price: number;
+        quantity: number;
+        availableQuantity: number;
         userId: string;
-        orderId?: string;
+        status: TicketStatus;
+        orderId?: string[];
     };
 }
