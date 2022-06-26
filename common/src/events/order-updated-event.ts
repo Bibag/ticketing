@@ -7,5 +7,9 @@ export interface OrderUpdatedEvent {
     id: string;
     version: number;
     status: OrderStatus;
+    ticket: {
+      id: string;
+    };
+    quantity: number;
   };
 }

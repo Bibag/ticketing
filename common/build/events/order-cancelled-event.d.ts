@@ -7,5 +7,6 @@ export interface OrderCancelledEvent {
         ticket: {
             id: string;
         };
+        quantity: number;
     };
 }

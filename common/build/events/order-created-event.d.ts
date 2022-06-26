@@ -12,5 +12,6 @@ export interface OrderCreatedEvent {
             id: string;
             price: number;
         };
+        quantity: number;
     };
 }
