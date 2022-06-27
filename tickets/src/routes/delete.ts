@@ -35,7 +35,7 @@ router.delete(
       throw new BadRequestError('Ticket already been cancelled');
     }
 
-    if (ticket.orderId) {
+    if (ticket.orderId?.length) {
       throw new BadRequestError('Cannot cancel a reserved ticket');
     }
 
