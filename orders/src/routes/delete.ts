@@ -51,6 +51,7 @@ router.delete(
       ticket: {
         id: order.ticket.id,
       },
+      quantity: order.quantity,
     };
 
     await new OrderCancelledPublisher(natsWrapper.client).publish(messageData);

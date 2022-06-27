@@ -5,6 +5,7 @@ import UseRequest from '../../hooks/use-request';
 const NewTicket = () => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState('');
 
   const onBlur = () => {
     const value = parseFloat(price);
@@ -22,6 +23,7 @@ const NewTicket = () => {
     body: {
       title,
       price,
+      quantity,
     },
     onSuccess: (ticket) => Router.push('/'),
   });
@@ -52,11 +54,22 @@ const NewTicket = () => {
               <label htmlFor="price">Price</label>
               <input
                 id="price"
-                type="price"
+                type="text"
                 className="form-control"
                 value={price}
                 onBlur={onBlur}
                 onChange={(e) => setPrice(e.target.value)}
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label htmlFor="quantity">Quantity</label>
+              <input
+                id="quantity"
+                type="text"
+                className="form-control"
+                value={quantity}
+                onBlur={onBlur}
+                onChange={(e) => setQuantity(e.target.value)}
               />
             </div>
             {errors}

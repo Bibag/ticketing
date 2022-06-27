@@ -12,6 +12,7 @@ it('return a 400 if the provided ticket id is not valid', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(400);
 });
@@ -24,6 +25,7 @@ it('return a 404 if the provided ticket id is not exist', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(404);
 });
@@ -35,6 +37,7 @@ it('return a 401 if the user is not authenticated', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(401);
 });
@@ -46,6 +49,7 @@ it('return a 401 if the user is not own the ticket', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(201);
 
@@ -57,11 +61,12 @@ it('return a 401 if the user is not own the ticket', async () => {
     .send({
       title: 'testupdate',
       price: 21,
+      quantity: 30,
     })
     .expect(401);
 });
 
-it('return a 400 if the user provided an invalid title or price', async () => {
+it('return a 400 if the user provided an invalid title or price or quantity', async () => {
   const cookie = global.signin();
 
   const response = await request(app)
@@ -70,6 +75,7 @@ it('return a 400 if the user provided an invalid title or price', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(201);
 
@@ -81,6 +87,7 @@ it('return a 400 if the user provided an invalid title or price', async () => {
     .send({
       title: '',
       price: 20,
+      quantity: 30,
     })
     .expect(400);
 
@@ -90,6 +97,17 @@ it('return a 400 if the user provided an invalid title or price', async () => {
     .send({
       title: 'test',
       price: -10,
+      quantity: 30,
+    })
+    .expect(400);
+
+  await request(app)
+    .put(`/api/tickets/${ticketId}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'test',
+      price: 10,
+      quantity: -30,
     })
     .expect(400);
 });
@@ -103,6 +121,7 @@ it('updates the ticket provided valid input', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(201);
 
@@ -110,6 +129,7 @@ it('updates the ticket provided valid input', async () => {
 
   const titleUpdate = 'testupdate';
   const priceUpdate = 21;
+  const quantityUpdate = 33;
 
   const responseTicket = await request(app)
     .put(`/api/tickets/${ticketId}`)
@@ -117,11 +137,13 @@ it('updates the ticket provided valid input', async () => {
     .send({
       title: titleUpdate,
       price: priceUpdate,
+      quantity: quantityUpdate,
     })
     .expect(200);
 
   expect(responseTicket.body.title).toEqual(titleUpdate);
   expect(responseTicket.body.price).toEqual(priceUpdate);
+  expect(responseTicket.body.quantity).toEqual(quantityUpdate);
 });
 
 it('publishes an event', async () => {
@@ -133,6 +155,7 @@ it('publishes an event', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(201);
 
@@ -140,6 +163,7 @@ it('publishes an event', async () => {
 
   const titleUpdate = 'testupdate';
   const priceUpdate = 21;
+  const quantityUpdate = 33;
 
   const responseTicket = await request(app)
     .put(`/api/tickets/${ticketId}`)
@@ -147,6 +171,7 @@ it('publishes an event', async () => {
     .send({
       title: titleUpdate,
       price: priceUpdate,
+      quantity: quantityUpdate,
     })
     .expect(200);
 
@@ -163,6 +188,7 @@ it('rejects updates if the ticket is reserved', async () => {
     .send({
       title: 'test',
       price: 20,
+      quantity: 30,
     })
     .expect(201);
 
@@ -176,6 +202,7 @@ it('rejects updates if the ticket is reserved', async () => {
     .send({
       title: 'udpate',
       price: 999,
+      quantity: 99,
     })
     .expect(400);
 });

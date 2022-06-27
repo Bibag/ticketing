@@ -13,7 +13,7 @@ import { Password } from '../services/password';
 const router = express.Router();
 
 router.put(
-  '/api/users/updatepassword',
+  '/api/users/update-password',
   currentUser,
   requireAuth,
   [

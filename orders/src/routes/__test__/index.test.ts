@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
+import { TicketStatus } from '@mrltickets/common';
 
 const createOrder = async (cookie: string[]) => {
   const id = new mongoose.Types.ObjectId().toString();
@@ -9,13 +10,16 @@ const createOrder = async (cookie: string[]) => {
     id,
     title: 'test',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
   return request(app)
     .post('/api/orders')
     .set('Cookie', cookie)
-    .send({ ticketId: ticket.id });
+    .send({ ticketId: ticket.id, quantity: 10 });
 };
 
 it('can only be accessed if the user is signed in', async () => {
@@ -53,6 +57,9 @@ const buildTicket = async () => {
     id,
     title: 'concert',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
@@ -71,19 +78,19 @@ it('fetches orders for an particular user', async () => {
   await request(app)
     .post('/api/orders')
     .set('Cookie', userOne)
-    .send({ ticketId: ticketOne.id })
+    .send({ ticketId: ticketOne.id, quantity: 15 })
     .expect(201);
 
   // Create two orders as User #2
   const { body: orderOne } = await request(app)
     .post('/api/orders')
     .set('Cookie', userTwo)
-    .send({ ticketId: ticketTwo.id })
+    .send({ ticketId: ticketTwo.id, quantity: 25 })
     .expect(201);
   const { body: orderTwo } = await request(app)
     .post('/api/orders')
     .set('Cookie', userTwo)
-    .send({ ticketId: ticketThree.id })
+    .send({ ticketId: ticketThree.id, quantity: 35 })
     .expect(201);
 
   // Make request to get orders for User #2

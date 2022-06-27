@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 import { natsWrapper } from '../../../nats-wrapper';
 import { OrderCreatedListener } from '../order-created-listener';
 import { Ticket } from '../../../models/ticket';
-import { OrderCreatedEvent, OrderStatus } from '@mrltickets/common';
+import {
+  OrderCreatedEvent,
+  OrderStatus,
+  TicketStatus,
+} from '@mrltickets/common';
 import { Message } from 'node-nats-streaming';
 
 const setup = async () => {
@@ -13,7 +17,11 @@ const setup = async () => {
   const ticket = Ticket.build({
     title: 'concert',
     price: 25,
+    quantity: 34,
+    reservedQuantity: 0,
+    soldQuantity: 0,
     userId: new mongoose.Types.ObjectId().toHexString(),
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
@@ -28,6 +36,7 @@ const setup = async () => {
       id: ticket.id,
       price: ticket.price,
     },
+    quantity: 10,
   };
 
   //create the fake message object
@@ -40,7 +49,7 @@ const setup = async () => {
   return { listener, ticket, data, msg };
 };
 
-it('sets the orderId   of the ticket', async () => {
+it('sets the orderId of the ticket', async () => {
   const { listener, ticket, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
@@ -49,7 +58,7 @@ it('sets the orderId   of the ticket', async () => {
 
   expect(updatedTicket).toBeDefined();
   expect(updatedTicket!.price).toEqual(data.ticket.price);
-  expect(updatedTicket!.orderId).toEqual(data.id);
+  expect(updatedTicket!.orderId![0]).toEqual(data.id);
 });
 
 it('acks the message', async () => {
@@ -72,5 +81,5 @@ it('publishes a  ticket updated event', async () => {
     (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
   );
 
-  expect(ticketUpdatedData.orderId).toEqual(data.id);
+  expect(ticketUpdatedData.orderId[0]).toEqual(data.id);
 });

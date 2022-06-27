@@ -44,6 +44,7 @@ export class ExpirationCompleteListener extends Listener<ExpirationCompleteEvent
         ticket: {
           id: order.ticket.id,
         },
+        quantity: order.quantity,
       };
 
       await new OrderCancelledPublisher(this.client).publish(messageData);

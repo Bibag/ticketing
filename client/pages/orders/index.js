@@ -18,8 +18,12 @@ const OrderIndex = ({ orders }) => {
             </a>
           </Link>
         </td>
+        <td style={{ fontSize: 1.5 + 'rem' }}>{order.quantity}</td>
         <td style={{ fontSize: 1.5 + 'rem', color: 'green' }}>
           ${order.ticket.price}
+        </td>
+        <td style={{ fontSize: 1.5 + 'rem', color: 'red' }}>
+          ${order.ticket.price * order.quantity}
         </td>
         <td>{order.status}</td>
         <td>
@@ -48,7 +52,9 @@ const OrderIndex = ({ orders }) => {
             <thead>
               <tr>
                 <th>Ticket</th>
+                <th>Quantity</th>
                 <th>Price</th>
+                <th>Total Amount</th>
                 <th>Status</th>
                 <th>Link</th>
               </tr>

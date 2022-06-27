@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Message } from 'node-nats-streaming';
 import request from 'supertest';
-import { TicketCreatedEvent } from '@mrltickets/common';
+import { TicketCreatedEvent, TicketStatus } from '@mrltickets/common';
 import { natsWrapper } from '../../../nats-wrapper';
 import { TicketCreatedListener } from '../ticket-created-listener';
 import { Ticket } from '../../../models/ticket';
@@ -16,6 +16,9 @@ const setup = async () => {
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 10,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
     userId: new mongoose.Types.ObjectId().toHexString(),
   };
 
@@ -40,6 +43,7 @@ it('creates  and saves a ticket', async () => {
   expect(ticket).toBeDefined();
   expect(ticket!.title).toEqual(data.title);
   expect(ticket!.price).toEqual(data.price);
+  expect(ticket!.availableQuantity).toEqual(data.availableQuantity);
 });
 
 it('acks  the  message', async () => {

@@ -6,6 +6,7 @@ import {
   NotFoundError,
   validateRequest,
   OrderStatus,
+  TicketStatus,
 } from '@mrltickets/common';
 import { body } from 'express-validator';
 import { Ticket } from '../models/ticket';
@@ -22,15 +23,25 @@ router.post(
   requireAuth,
   [
     body('ticketId')
+      .trim()
       .not()
       .isEmpty()
       .withMessage('TicketId must be provided')
       .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
       .withMessage('TicketId mus be valid'),
+    body('quantity')
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage('Quantity is required')
+      .isInt()
+      .withMessage('Quantity must be valid')
+      .isInt({ gt: 0 })
+      .withMessage('Quantity must be a positive integer'),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { ticketId } = req.body;
+    const { ticketId, quantity } = req.body;
     const currentUser = req.currentUser!;
 
     //find the ticket the user is trying to order in the database
@@ -43,9 +54,24 @@ router.post(
     //run query to look at all orders. Find an order where the ticket
     //is the ticket we just found *and* the orders status is *not* cancelled.
     //If we find and order from that means the ticket *is* reserved
-    const isReserved = await ticket.isReserved();
-    if (isReserved) {
-      throw new BadRequestError('Ticket is already reserved');
+    // const isReserved = await ticket.isReserved();
+    // if (isReserved) {
+    //   throw new BadRequestError('Ticket is already reserved');
+    // }
+
+    //ckeck ticket is available or not
+    if (ticket.status === TicketStatus.NotAvailable) {
+      throw new BadRequestError('Ticket is not available');
+    }
+
+    //ckeck available quantity
+    if (ticket.status === TicketStatus.OutOfStock) {
+      throw new BadRequestError('Ticket is out of stock');
+    }
+
+    //make sure quantity not exceed available quantity
+    if (quantity > ticket.availableQuantity) {
+      throw new BadRequestError('Quantity exceeds available quantity');
     }
 
     //calculate an expiration date for this order
@@ -58,6 +84,7 @@ router.post(
       expiresAt: expiration,
       status: OrderStatus.Created,
       ticket,
+      quantity,
     });
     await order.save();
 
@@ -72,6 +99,7 @@ router.post(
         id: order.ticket.id,
         price: order.ticket.price,
       },
+      quantity: order.quantity,
     };
     await new OrderCreatedPublisher(natsWrapper.client).publish(messageData);
 

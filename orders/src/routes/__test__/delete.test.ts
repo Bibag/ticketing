@@ -4,6 +4,7 @@ import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
 import { Order, OrderStatus } from '../../models/order';
 import { natsWrapper } from '../../nats-wrapper';
+import { TicketStatus } from '@mrltickets/common';
 
 it('can only be accessed if the user is signed in', async () => {
   const orderId = new mongoose.Types.ObjectId().toHexString();
@@ -43,13 +44,16 @@ it('return an error if the user is not the owner of the order', async () => {
     id,
     title: 'test',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
   const orderResponse = await request(app)
     .post('/api/orders')
     .set('Cookie', global.signin())
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: ticket.id, quantity: 15 })
     .expect(201);
 
   await request(app)
@@ -67,13 +71,16 @@ it('can change status to cancelled', async () => {
     id,
     title: 'test',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
   const orderResponse = await request(app)
     .post('/api/orders')
     .set('Cookie', cookie)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: ticket.id, quantity: 15 })
     .expect(201);
 
   await request(app)
@@ -95,13 +102,16 @@ it('publishes an event', async () => {
     id,
     title: 'test',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
   const orderResponse = await request(app)
     .post('/api/orders')
     .set('Cookie', cookie)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: ticket.id, quantity: 15 })
     .expect(201);
 
   await request(app)

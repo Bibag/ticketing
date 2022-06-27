@@ -25,7 +25,8 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
         throw new Error('[In order-cancelled-listener]: Ticket not found');
       }
 
-      ticket.set({ orderId: undefined });
+      ticket.reservedQuantity = ticket.reservedQuantity - data.quantity;
+      ticket.orderId = [...ticket.orderId!.filter((id) => id !== data.id)];
 
       await ticket.save();
 
@@ -34,8 +35,11 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
         version: ticket.version,
         title: ticket.title,
         price: ticket.price,
+        quantity: ticket.quantity,
+        availableQuantity: ticket.availableQuantity(),
         userId: ticket.userId,
         orderId: ticket.orderId,
+        status: ticket.status,
       };
 
       await new TicketUpdatetedPublisher(this.client).publish(messageData);

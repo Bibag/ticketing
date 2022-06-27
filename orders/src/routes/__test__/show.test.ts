@@ -1,3 +1,4 @@
+import { TicketStatus } from '@mrltickets/common';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../../app';
@@ -41,13 +42,16 @@ it('return an error if the user is not the owner of the order', async () => {
     id,
     title: 'test',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
   const orderResponse = await request(app)
     .post('/api/orders')
     .set('Cookie', global.signin())
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: ticket.id, quantity: 10 })
     .expect(201);
 
   await request(app)
@@ -65,13 +69,16 @@ it('return the order if the order is found', async () => {
     id,
     title: 'test',
     price: 20,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
   const orderResponse = await request(app)
     .post('/api/orders')
     .set('Cookie', cookie)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: ticket.id, quantity: 20 })
     .expect(201);
 
   await request(app)

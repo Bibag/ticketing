@@ -1,4 +1,8 @@
-import { ExpirationCompleteEvent, OrderStatus } from '@mrltickets/common';
+import {
+  ExpirationCompleteEvent,
+  OrderStatus,
+  TicketStatus,
+} from '@mrltickets/common';
 import mongoose from 'mongoose';
 import { Message } from 'node-nats-streaming';
 import { Order } from '../../../models/order';
@@ -15,6 +19,9 @@ const setup = async () => {
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'test',
     price: 22,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
@@ -24,6 +31,7 @@ const setup = async () => {
     status: OrderStatus.Created,
     expiresAt: new Date(),
     ticket,
+    quantity: 10,
   });
   order.set({
     version: 0,

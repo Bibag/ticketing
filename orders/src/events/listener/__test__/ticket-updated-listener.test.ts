@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Message } from 'node-nats-streaming';
 import request from 'supertest';
 import { Ticket } from '../../../models/ticket';
-import { TicketUpdatedEvent } from '@mrltickets/common';
+import { TicketStatus, TicketUpdatedEvent } from '@mrltickets/common';
 import { TicketUpdatedListener } from '../ticket-updated-listener';
 import { natsWrapper } from '../../../nats-wrapper';
 
@@ -15,6 +15,9 @@ const setup = async () => {
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 15,
+    quantity: 100,
+    availableQuantity: 92,
+    status: TicketStatus.Available,
   });
   await ticket.save();
 
@@ -24,6 +27,9 @@ const setup = async () => {
     version: ticket.version + 1,
     title: 'new concert',
     price: 999,
+    quantity: 200,
+    availableQuantity: 192,
+    status: TicketStatus.Available,
     userId: new mongoose.Types.ObjectId().toHexString(),
   };
 
@@ -47,6 +53,8 @@ it('finds, updates,  and saves a ticket', async () => {
   expect(updatedTicket).toBeDefined();
   expect(updatedTicket!.title).toEqual(data.title);
   expect(updatedTicket!.price).toEqual(data.price);
+  expect(updatedTicket!.quantity).toEqual(data.quantity);
+  expect(updatedTicket!.availableQuantity).toEqual(data.availableQuantity);
 });
 
 it('akcs  the message', async () => {

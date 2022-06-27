@@ -18,6 +18,11 @@ const LandingPage = ({ currentUser, tickets }) => {
           </Link>
         </td>
         <td>
+          <span style={{ fontSize: 1.5 + 'rem' }}>
+            {ticket.availableQuantity}
+          </span>
+        </td>
+        <td>
           <span style={{ fontSize: 1.5 + 'rem', color: 'green' }}>
             ${ticket.price}
           </span>
@@ -48,6 +53,7 @@ const LandingPage = ({ currentUser, tickets }) => {
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Stock</th>
                 <th>Price</th>
                 <th>Link</th>
               </tr>

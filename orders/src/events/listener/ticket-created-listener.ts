@@ -14,7 +14,7 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
 
   async onMessage(data: TicketCreatedEvent['data'], msg: Message) {
     try {
-      const { id, title, price } = data;
+      const { id, title, price, quantity, availableQuantity, status } = data;
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new BadRequestError('Ticket ID must be valid');
@@ -24,6 +24,9 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
         id,
         title,
         price,
+        quantity,
+        availableQuantity,
+        status,
       });
 
       await ticket.save();

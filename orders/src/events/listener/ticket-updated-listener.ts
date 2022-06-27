@@ -30,13 +30,15 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
       ticket.set({
         title: data.title,
         price: data.price,
-        orderId: data.orderId,
+        quantity: data.quantity,
+        availableQuantity: data.availableQuantity,
+        status: data.status,
       });
       await ticket.save();
 
       msg.ack();
     } catch (error) {
-      console.error('Something went wrong!');
+      console.error('Something went wrong!', error);
     }
   }
 }

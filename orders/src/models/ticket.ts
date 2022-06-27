@@ -1,3 +1,4 @@
+import { TicketStatus } from '@mrltickets/common';
 import mongoose from 'mongoose';
 import { Order, OrderStatus } from './order';
 
@@ -5,13 +6,19 @@ interface TicketAttrs {
   id: string;
   title: string;
   price: number;
+  quantity: number;
+  availableQuantity: number;
+  status: TicketStatus;
 }
 
 export interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
+  quantity: number;
+  availableQuantity: number;
   version: number;
-  orderId?: string;
+  orderId?: string[];
+  status: TicketStatus;
   isReserved(): Promise<boolean>;
 }
 
@@ -34,8 +41,25 @@ const ticketSchema = new mongoose.Schema(
       requried: true,
       min: 0,
     },
-    orderId: {
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    availableQuantity: {
+      type: Number,
+      min: 0,
+    },
+    orderId: [
+      {
+        type: String,
+      },
+    ],
+    status: {
       type: String,
+      required: true,
+      enum: Object.values(TicketStatus),
+      default: TicketStatus.Available,
     },
   },
   {
@@ -50,6 +74,23 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
+ticketSchema.pre('save', async function (done) {
+  if (this.isModified('quantity') || this.isModified('availableQuantity')) {
+    this.set('quantity', parseInt(this.get('quantity')));
+    this.set('availableQuantity', parseInt(this.get('availableQuantity')));
+
+    if (this.get('status') !== TicketStatus.NotAvailable) {
+      if (this.get('availableQuantity') === 0) {
+        this.set('status', TicketStatus.OutOfStock);
+      } else {
+        this.set('status', TicketStatus.Available);
+      }
+    }
+
+    done();
+  }
+});
+
 ticketSchema.set('versionKey', 'version');
 
 ticketSchema.statics.findByEvent = (event: { id: string; version: number }) => {
@@ -63,6 +104,8 @@ ticketSchema.statics.build = (attrs: TicketAttrs) => {
     _id: attrs.id,
     title: attrs.title,
     price: attrs.price,
+    quantity: attrs.quantity,
+    availableQuantity: attrs.availableQuantity,
   });
 };
 ticketSchema.methods.isReserved = async function () {

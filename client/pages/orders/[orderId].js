@@ -54,7 +54,11 @@ const OrderDetail = ({ order, currentUser }) => {
     <div className="container">
       <div className="row  my-5">
         <div className="col">
-          <h1>Purchasing {order.ticket.title}</h1>
+          <h1 className="mb-3">Purchasing {order.ticket.title}</h1>
+          <h6 className="mb-3">Quantity: {order.quantity}</h6>
+          <h6 className="mb-3">
+            Total Amount: ${order.quantity * order.ticket.price}
+          </h6>
           <div className="mb-3">
             {timeLeft > 0 ? (
               <div>
@@ -72,7 +76,7 @@ const OrderDetail = ({ order, currentUser }) => {
             <StripeCheckout
               token={({ id }) => payOrder.doRequest({ token: id })}
               stripeKey="pk_test_51LCy21BrPgNinwicOo66oSllaRYEuwKm2SdBx37JgyPWNCcKJ8IQtnJurFW697sSrkxcW8iZezo9NIGYUGVVQXp400SXEmFnQP"
-              amount={order.ticket.price * 100}
+              amount={order.quantity * order.ticket.price * 100}
               email={currentUser.email}
             />
           </div>

@@ -21,7 +21,7 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
         throw new BadRequestError('Order ID  Must be valid');
       }
 
-      const order = await Order.findById(data.orderId);
+      const order = await Order.findById(data.orderId).populate('ticket');
 
       if (!order) {
         throw Error('Order not found');
@@ -41,6 +41,10 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
         id: order.id,
         version: order.version,
         status: order.status,
+        ticket: {
+          id: order.ticket.id,
+        },
+        quantity: order.quantity,
       };
 
       await new OrderUpdatedPublisher(this.client).publish(messageData);

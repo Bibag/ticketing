@@ -9,6 +9,7 @@ interface OrderAttrs {
   status: OrderStatus;
   expiresAt: Date;
   ticket: TicketDoc;
+  quantity: number;
 }
 
 interface OrderDoc extends mongoose.Document {
@@ -16,6 +17,7 @@ interface OrderDoc extends mongoose.Document {
   status: OrderStatus;
   expiresAt: Date;
   ticket: TicketDoc;
+  quantity: number;
   version: number;
 }
 
@@ -41,6 +43,11 @@ const orderSchema = new mongoose.Schema(
     ticket: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Ticket',
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
     },
   },
   {

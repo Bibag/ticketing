@@ -20,6 +20,7 @@ const setup = async () => {
       id: new mongoose.Types.ObjectId().toHexString(),
       price: 19,
     },
+    quantity: 10,
   };
 
   //create a  fake  message object
@@ -40,7 +41,7 @@ it('replicates the order  info', async () => {
   const order = await Order.findById(data.id);
 
   expect(order).toBeDefined();
-  expect(order!.price).toEqual(data.ticket.price);
+  expect(order!.price).toEqual(data.ticket.price * data.quantity);
 });
 
 it('acks  the message', async () => {

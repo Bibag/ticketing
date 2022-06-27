@@ -3,13 +3,25 @@ import Router from 'next/router';
 import { useState } from 'react';
 
 const TicketShow = ({ currentUser, ticket }) => {
+  const [quantity, setQuantity] = useState('');
   const [purchaseClickStatus, setPurchaseClickStatus] = useState(false);
 
-  const { doRequest, errors } = UseRequest({
+  const onBlur = () => {
+    const value = parseInt(quantity);
+
+    if (isNaN(value)) {
+      return;
+    }
+
+    setQuantity(value);
+  };
+
+  const purchaseRequest = UseRequest({
     url: '/api/orders',
     method: 'post',
     body: {
       ticketId: ticket.id,
+      quantity,
     },
     onSuccess: (order) =>
       Router.push('/orders/[orderId]', `/orders/${order.id}`),
@@ -20,9 +32,13 @@ const TicketShow = ({ currentUser, ticket }) => {
 
     setPurchaseClickStatus(true);
 
-    await doRequest();
+    await purchaseRequest.doRequest();
 
     setPurchaseClickStatus(false);
+  };
+
+  const onClickDeleteTicketHandler = async (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -31,9 +47,21 @@ const TicketShow = ({ currentUser, ticket }) => {
         <div className="col">
           <div>
             <h1>{ticket.title}</h1>
-            <h4 className="mb-3">Price: {ticket.price}</h4>
+            <h4 className="mb-3">Price: ${ticket.price}</h4>
+            <h6 className="mb-3">Stock: {ticket.availableQuantity}</h6>
+            <div className="form-group mb-3 d-inline-block">
+              <label htmlFor="quantity">Quantity</label>
+              <input
+                id="quantity"
+                type="text"
+                className="form-control"
+                value={quantity}
+                onBlur={onBlur}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+            </div>
           </div>
-          {errors}
+          {purchaseRequest.errors}
           <button
             style={{ width: 10 + 'rem' }}
             className="btn btn-primary rounded-pill me-3"
@@ -54,6 +82,15 @@ const TicketShow = ({ currentUser, ticket }) => {
               }
             >
               Update
+            </button>
+          )}
+          {ticket.userId === currentUser.id && (
+            <button
+              style={{ width: 10 + 'rem' }}
+              className="btn btn-danger rounded-pill"
+              onClick={onClickDeleteTicketHandler}
+            >
+              Delete
             </button>
           )}
         </div>

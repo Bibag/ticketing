@@ -8,6 +8,7 @@ import { showTicketRouter } from './routes/show';
 import { indexTicketRouter } from './routes';
 import { updateTicketRouter } from './routes/update';
 import { errorHandler, NotFoundError, currentUser } from '@mrltickets/common';
+import { deleteTicketRouter } from './routes/delete';
 
 const app = express();
 app.set('trust proxy', true);
@@ -25,6 +26,7 @@ app.use(createTicketRouter);
 app.use(showTicketRouter);
 app.use(indexTicketRouter);
 app.use(updateTicketRouter);
+app.use(deleteTicketRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

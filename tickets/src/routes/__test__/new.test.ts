@@ -7,6 +7,7 @@ it('has a route handler listening to /api/tickets for post requests', async () =
   const response = await request(app).post('/api/tickets').send({
     title: 'test',
     price: 12,
+    quanity: 14,
   });
 
   expect(response.status).not.toEqual(404);
@@ -18,6 +19,7 @@ it('can only be accessed if the user is signed in', async () => {
     .send({
       title: 'test',
       price: 12,
+      quantity: 20,
     })
     .expect(401);
 });
@@ -29,6 +31,7 @@ it('return a status other than 401 if the user is signed in', async () => {
     .send({
       title: 'test',
       price: 12,
+      quantity: 20,
     });
 
   expect(response.status).not.toEqual(401);
@@ -41,6 +44,7 @@ it('return an error if an invalid title is provied', async () => {
     .send({
       title: '',
       price: 12,
+      quantity: 20,
     })
     .expect(400);
 });
@@ -52,6 +56,19 @@ it('return an error if an invalid price is provided', async () => {
     .send({
       title: 'test',
       price: -10,
+      quantity: 20
+    })
+    .expect(400);
+});
+
+it('return an error if an invalid quantity is provided', async () => {
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({
+      title: 'test',
+      price: 10,
+      quantity: -20
     })
     .expect(400);
 });
@@ -62,6 +79,7 @@ it('creates a ticket with valid inputs', async () => {
 
   const title = 'test';
   const price = 12;
+  const quantity=20;
 
   await request(app)
     .post('/api/tickets')
@@ -69,6 +87,7 @@ it('creates a ticket with valid inputs', async () => {
     .send({
       title,
       price,
+      quantity
     })
     .expect(201);
 
@@ -76,6 +95,7 @@ it('creates a ticket with valid inputs', async () => {
   expect(tickets.length).toEqual(1);
   expect(tickets[0].title).toEqual(title);
   expect(tickets[0].price).toEqual(price);
+  expect(tickets[0].quantity).toEqual(quantity);
 });
 
 // it('return a error if existed ticket title is provided', async () => {
@@ -113,6 +133,7 @@ it('creates a ticket with valid inputs', async () => {
 it('publishes an event', async () => {
   const title = 'test';
   const price = 12;
+  const quantity= 20;
 
   await request(app)
     .post('/api/tickets')
@@ -120,6 +141,7 @@ it('publishes an event', async () => {
     .send({
       title,
       price,
+      quantity,
     })
     .expect(201);
 
