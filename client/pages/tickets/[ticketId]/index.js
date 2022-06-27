@@ -5,6 +5,7 @@ import { useState } from 'react';
 const TicketShow = ({ currentUser, ticket }) => {
   const [quantity, setQuantity] = useState('');
   const [purchaseClickStatus, setPurchaseClickStatus] = useState(false);
+  const [deleteClickStatus, setDeleteClickStatus] = useState(false);
 
   const onBlur = () => {
     const value = parseInt(quantity);
@@ -27,6 +28,13 @@ const TicketShow = ({ currentUser, ticket }) => {
       Router.push('/orders/[orderId]', `/orders/${order.id}`),
   });
 
+  const deleteRequest = UseRequest({
+    url: `/api/tickets/${ticket.id}`,
+    method: 'delete',
+    body: {},
+    onSuccess: () => Router.push('/'),
+  });
+
   const onClickPurchase = async (event) => {
     event.preventDefault();
 
@@ -39,6 +47,12 @@ const TicketShow = ({ currentUser, ticket }) => {
 
   const onClickDeleteTicketHandler = async (event) => {
     event.preventDefault();
+
+    setDeleteClickStatus(true);
+
+    await deleteRequest.doRequest();
+
+    setDeleteClickStatus(false);
   };
 
   return (
@@ -62,6 +76,7 @@ const TicketShow = ({ currentUser, ticket }) => {
             </div>
           </div>
           {purchaseRequest.errors}
+          {deleteRequest.errors}
           <button
             style={{ width: 10 + 'rem' }}
             className="btn btn-primary rounded-pill me-3"
@@ -88,6 +103,7 @@ const TicketShow = ({ currentUser, ticket }) => {
             <button
               style={{ width: 10 + 'rem' }}
               className="btn btn-danger rounded-pill"
+              disabled={deleteClickStatus}
               onClick={onClickDeleteTicketHandler}
             >
               Delete

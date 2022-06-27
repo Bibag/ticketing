@@ -5,6 +5,7 @@ import Router from 'next/router';
 const TicketUpdate = ({ ticket }) => {
   const [title, setTitle] = useState(ticket.title);
   const [price, setPrice] = useState(ticket.price);
+  const [quantity, setQuantity] = useState(ticket.quantity);
   const [updateClickStatus, setUpdateClickStatus] = useState(false);
 
   const onBlur = () => {
@@ -23,6 +24,7 @@ const TicketUpdate = ({ ticket }) => {
     body: {
       title,
       price,
+      quantity,
     },
     onSuccess: (ticket) =>
       Router.push('/tickets/[ticketId]', `/tickets/${ticket.id}`),
@@ -58,11 +60,21 @@ const TicketUpdate = ({ ticket }) => {
               <label htmlFor="price">Price</label>
               <input
                 id="price"
-                type="price"
+                type="text"
                 className="form-control"
                 value={price}
                 onBlur={onBlur}
                 onChange={(e) => setPrice(e.target.value)}
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label htmlFor="price">Quantity</label>
+              <input
+                id="quantity"
+                type="text"
+                className="form-control"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
               />
             </div>
             {errors}
