@@ -88,7 +88,7 @@ const TicketShow = ({ currentUser, ticket }) => {
           {ticket.userId === currentUser.id && (
             <button
               style={{ width: 10 + 'rem' }}
-              className="btn btn-warning  rounded-pill"
+              className="btn btn-warning me-3 rounded-pill"
               onClick={(event) =>
                 Router.push(
                   '/tickets/[ticketId]/edit',
