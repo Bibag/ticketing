@@ -6,7 +6,7 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
     <>
       <Head>
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/static/favicon.ico" />
       </Head>
       <Header currentUser={currentUser} />
       <Component currentUser={currentUser} {...pageProps} />
