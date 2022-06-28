@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import 'bootstrap/dist/css/bootstrap.css';
 import BuildClient from '../api/build-client';
 import Header from '../component/header';
