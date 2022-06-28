@@ -4,10 +4,13 @@ import Header from '../component/header';
 
 const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
-    <div>
+    <>
+      <Head>
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </Head>
       <Header currentUser={currentUser} />
       <Component currentUser={currentUser} {...pageProps} />
-    </div>
+    </>
   );
 };
 
