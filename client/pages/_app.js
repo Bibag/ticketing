@@ -7,6 +7,7 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
     <>
       <Head>
+        <title>Buy and Sell Ticket</title>
         <link rel="shortcut icon" href="/static/favicon.ico" />
       </Head>
       <Header currentUser={currentUser} />
